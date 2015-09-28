@@ -14,8 +14,8 @@ config = {
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
-  admins: [58389411], // TODO: load from external config
-  debugMsgs: true
+  admins: [58389411, 34815606, 65195363], // TODO: load from external config
+  debugMsgs: false
 },
 
 data = {
