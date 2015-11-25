@@ -72,10 +72,10 @@ getBotInfo = () => {
 
 REGEXPS = {
   subscribe: /start|subscribe|عضویت/i,
-  unsubscribe: /stop|unsubscribe|خروج|لغو\s*عضویت/i,
-  hello: /hi|hello|welcome|salam|سلام|درود|خوش\s*[اآ]مدی/i,
-  help: /help|راهنما/i,
-  about: /about|درباره/i
+  unsubscribe: /stop|unsubscribe|لغو\s*عضویت/i,
+  hello: /hi|hello|welcome|salam|سلام|درود|خوش\s*[اآ]مدی/i
+  // help: /help|راهنما/i,
+  // about: /about|درباره/i
 },
 //TODO: fix msg text length
 
@@ -134,18 +134,18 @@ onMessage = (msg) => {
   // }
 
   // help
-  if (REGEXPS.help.test(msg.text))
-  {
-    sendPost(msg.chat.id, 0); // post 0 always is help
-    return;
-  }
+  // if (REGEXPS.help.test(msg.text))
+  // {
+  //   sendPost(msg.chat.id, 0); // post 0 always is help
+  //   return;
+  // }
 
   // about
-  if (REGEXPS.about.test(msg.text))
-  {
-    sendText(msg.chat.id, l10n('about').replace('%name%', msg.from.first_name));
-    return;
-  }
+  // if (REGEXPS.about.test(msg.text))
+  // {
+  //   sendText(msg.chat.id, l10n('about').replace('%name%', msg.from.first_name));
+  //   return;
+  // }
 
 
   //Hello
@@ -231,11 +231,11 @@ onMessage = (msg) => {
   }
 
   // upload audio
-  if(fromAdmin && (msg.text || '').trim().indexOf('/uploadaudio ') === 0)
-  {
-    uploadAudio(msg.chat.id, msg.text.replace('/uploadaudio ', '').trim());
-    return;
-  }
+  // if(fromAdmin && (msg.text || '').trim().indexOf('/uploadaudio ') === 0)
+  // {
+  //   uploadAudio(msg.chat.id, msg.text.replace('/uploadaudio ', '').trim());
+  //   return;
+  // }
 
   // status
   if(fromAdmin && (msg.text || '').trim().indexOf('/status') === 0)
@@ -838,7 +838,7 @@ sendStatus = (userId) => {
   return; // disable temporary
   console.log(`sendStatus to ${userId}`);
   let status = {
-    help: getPost(0) ? getPost(0).sent_count : 'Err!',
+    // help: getPost(0) ? getPost(0).sent_count : 'Err!',
     posts: {},
     postSum: 0,
     users: 0,
