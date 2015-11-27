@@ -419,7 +419,7 @@ sendMessage = (id, message, fb) => {
   }
 
   else if (message.document) {
-    onsole.log('bot.sendDocument');
+    console.log('bot.sendDocument');
     bot.sendDocument({
       chat_id: id,
       document: message.document.id
