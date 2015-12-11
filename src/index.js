@@ -23,19 +23,27 @@ data = {
   posts: null
 },
 
-bot = new telegramBot({
-  token: config.token,
-  updates: {
-    enabled: true,
-    get_interval: config.updateInterval
-  }
-}),
-
 init = () => {
   console.log('Init');
+  if(!config.BOT_TOKEN){
+    console.log('BOT_TOKEN not found!');
+    return false;
+  }
+  makeBot();
   botEvents();
   loadData();
   getBotInfo();
+},
+
+bot,
+makeBot = function (){
+  bot = new telegramBot({
+    token: config.token,
+    updates: {
+      enabled: true,
+      get_interval: config.updateInterval
+    }
+  });
 },
 
 botEvents = () => {
@@ -835,7 +843,7 @@ uploadAudio = (userId, path) => {
 },
 
 sendStatus = (userId) => {
-  return; // disable temporary
+  return; // TODO: rewrite status
   console.log(`sendStatus to ${userId}`);
   let status = {
     // help: getPost(0) ? getPost(0).sent_count : 'Err!',
