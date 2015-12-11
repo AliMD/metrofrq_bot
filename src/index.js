@@ -263,6 +263,7 @@ onMessage = (msg) => {
   // make backup
   if(fromAdmin && (msg.text || '').trim().indexOf('/backup') === 0)
   {
+    saveContents(true);
     makeBackup(msg.from.id);
     return;
   }
