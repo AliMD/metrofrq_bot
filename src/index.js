@@ -277,7 +277,7 @@ subscribe = (user, from) => {
   {
     usr.title = user.title;
 
-    sendText(user.id, l10n('group_subscribed').replace('%name%', from.first_name)).replace('%title%', user.title));
+    sendText(user.id, l10n('group_subscribed').replace('%name%', from.first_name).replace('%title%', user.title));
     if(from && from.id) sendText(from.id, l10n('thanks_for_add_to_group').replace('%name%', from.first_name).replace('%title%', user.title));
   }
   else
