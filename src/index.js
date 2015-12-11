@@ -25,7 +25,7 @@ data = {
 
 init = () => {
   console.log('Init');
-  if(!config.BOT_TOKEN){
+  if(!config.token){
     console.log('BOT_TOKEN not found!');
     return false;
   }
