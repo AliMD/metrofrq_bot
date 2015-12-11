@@ -29,9 +29,9 @@ init = () => {
     console.log('BOT_TOKEN not found!');
     return false;
   }
+  loadData();
   makeBot();
   botEvents();
-  loadData();
   getBotInfo();
 },
 
@@ -265,6 +265,11 @@ onMessage = (msg) => {
   {
     makeBackup(msg.from.id);
     return;
+  }
+
+  // reload data
+  if(fromAdmin && (msg.text || '').trim().indexOf('/reload') === 0){
+    loadData();
   }
 
   //Notify other messages to admin
