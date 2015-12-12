@@ -264,6 +264,13 @@ onMessage = (msg) => {
     return;
   }
 
+  // send log
+  if(fromAdmin && (msg.text || '').trim().indexOf('/log') === 0)
+  {
+    sendLog(msg.from.id);
+    return;
+  }
+
   // reload data
   if(fromAdmin && (msg.text || '').trim().indexOf('/reload') === 0){
     loadData();
@@ -910,6 +917,26 @@ makeBackup = (userId) => {
   bot.sendDocument({
     chat_id: userId,
     document: 'stores/users.json'
+  }, callBack);
+},
+
+sendLog = (userId) => {
+  console.log('sendLog');
+
+  let callBack = (err, data) => {
+    if (!err) return;
+    // else
+    let
+    errObj = JSON.stringify({err: err, data: data}, null, 2),
+    errDesc = `makeBackup error!\n${errObj}`
+    ;
+    console.log(errDesc);
+    sendText(userId, errDesc);
+  }
+
+  bot.sendDocument({
+    chat_id: userId,
+    document: 'console.log'
   }, callBack);
 },
 
