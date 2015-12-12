@@ -37,6 +37,7 @@ init = () => {
 
 bot,
 makeBot = function (){
+  console.log('makeBot');
   bot = new telegramBot({
     token: config.token,
     updates: {
@@ -62,7 +63,7 @@ loadData = () => {
 
 getBotInfo = () => {
   console.log('getBotInfo');
-  console.log(`token: ${config.token}`);
+  // console.log(`token: ${config.token}`);
   bot.getMe((err, data) => {
     if (data && data.username)
     {
@@ -82,12 +83,8 @@ REGEXPS = {
   subscribe: /start|subscribe|عضویت/i,
   unsubscribe: /stop|unsubscribe|لغو\s*عضویت/i,
   hello: /hi|hello|welcome|salam|سلام|درود|خوش\s*[اآ]مدی/i
-  // help: /help|راهنما/i,
-  // about: /about|درباره/i
 },
 //TODO: fix msg text length
-
-zmba_iv = 0,
 
 requestMessage = {},
 
@@ -184,7 +181,6 @@ onMessage = (msg) => {
     if (!checkSubscribed(msg.from.id)) subscribe(msg.from);
     return;
   }
-
 
   //User Unsubscribe
   if (REGEXPS.unsubscribe.test(msg.text))
