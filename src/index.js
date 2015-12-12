@@ -218,7 +218,7 @@ onMessage = (msg) => {
   {
     let postId = fixNumbers(msg.text.replace('/','').replace(' ',''));
     if (getPost(postId)) {
-      sendPost(msg.chat.id, postId);
+      sendPost(msg.chat.id, postId, fromAdmin);
       return;
     }
   }
@@ -631,7 +631,7 @@ fixNumbers = (str) => {
   return str;
 },
 
-sendPost = (userId, postId) => {
+sendPost = (userId, postId, skipCount=false) => {
   console.log(`sendPost: ${postId} to ${userId}`);
   let post = getPost(postId);
 
@@ -676,8 +676,10 @@ sendPost = (userId, postId) => {
     }, i*config.waitForPosts, i);
   }
 
-  post.sent_count++;
-  saveContents();
+  if(!skipCount){
+    post.sent_count++;
+    saveContents();
+  }
 },
 
 getPost = (postId) => {
@@ -852,33 +854,41 @@ uploadAudio = (userId, path) => {
 sendStatus = (userId) => {
   console.log(`sendStatus to ${userId}`);
   let status = {
-    users: 0,
-    groups: 0,
-    users_stop: 0,
-    groups_stop: 0,
-    posts: {},
-    postsSum: 0
+    'Users': 0,
+    'Groups': 0,
+    'Users Stoped': 0,
+    'Groups Stoped': 0,
+    'All Users': 0,
+
+    'Posts Sent': {},
+    'Posts Length': 0,
+    'All Posts Sent': 0
   };
 
+  // Users calc
   let users = Object.keys(data.users); // array of all user id's
+  status['All Users'] = users.length;
   users.forEach( (userId, i) => {
     if(userId>0)
     {
-      status[data.users[userId].unsubscribed ? 'users_stop' : 'users']++;
+      status[data.users[userId].unsubscribed ? 'Users Stoped' : 'Users']++;
     }
     else
     {
-      status[data.users[userId].unsubscribed ? 'groups_stop' : 'groups']++;
+      status[data.users[userId].unsubscribed ? 'Groups Stoped' : 'Groups']++;
     }
   });
 
+  // Posts calc
   let posts = Object.keys(data.posts); // array of all post id's
+  status['Posts Length'] = posts.length;
   posts.forEach( (postId, i) => {
-    status.posts[postId] = getPost(postId).sent_count;
-    status.postsSum += status.posts[postId];
+    status['Posts Sent'][postId] = getPost(postId).sent_count;
+    status['All Posts Sent'] += status['Posts Sent'][postId];
   });
 
-  sendText(userId, JSON.stringify(status, null, 2));
+  let breakStr = '  "Posts Sent"';
+  sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
 },
 
 makeBackup = (userId) => {
