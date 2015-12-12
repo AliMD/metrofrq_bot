@@ -850,35 +850,32 @@ uploadAudio = (userId, path) => {
 },
 
 sendStatus = (userId) => {
-  return; // TODO: rewrite status
   console.log(`sendStatus to ${userId}`);
   let status = {
-    // help: getPost(0) ? getPost(0).sent_count : 'Err!',
-    posts: {},
-    postSum: 0,
     users: 0,
-    groups: 0
+    groups: 0,
+    users_stop: 0,
+    groups_stop: 0,
+    posts: {},
+    postsSum: 0
   };
 
-  //TODO: Fix
-  for(let i=1, len = data.posts.length; i<len; i++)
-  {
-    if(!getPost(i)) continue;
-    status.posts[`Cast_${i}`] = getPost(i).sent_count;
-    status.postSum += status.posts[`Cast_${i}`];
-  }
-
-  let users = Object.keys(data.users);
+  let users = Object.keys(data.users); // array of all user id's
   users.forEach( (userId, i) => {
-    if(data.users[userId].unsubscribed) return true;
     if(userId>0)
     {
-      status.users++;
+      status[data.users[userId].unsubscribed ? 'users_stop' : 'users']++;
     }
     else
     {
-      status.groups++;
+      status[data.users[userId].unsubscribed ? 'groups_stop' : 'groups']++;
     }
+  });
+
+  let posts = Object.keys(data.posts); // array of all post id's
+  posts.forEach( (postId, i) => {
+    status.posts[postId] = getPost(postId).sent_count;
+    status.postsSum += status.posts[postId];
   });
 
   sendText(userId, JSON.stringify(status, null, 2));
