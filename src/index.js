@@ -271,6 +271,7 @@ onMessage = (msg) => {
   // reload data
   if(fromAdmin && (msg.text || '').trim().indexOf('/reload') === 0){
     loadData();
+    notifyAdmins('Data reloaded');
   }
 
   //Notify other messages to admin
