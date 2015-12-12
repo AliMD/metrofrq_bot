@@ -324,7 +324,7 @@ unsubscribe = (user, from, silent = false) => {
     if(!silent) sendText(user.id, l10n('not_subscribed').replace('%name%', user.first_name));
     return;
   }
-  data.users[user.id].unsubscribed = true;
+  data.users[user.id].stoped = true;
   if(!silent) sendText(user.id, l10n('unsubscribed').replace('%name%', user.first_name));
   saveContents();
   //TODO: send some quite message
@@ -443,7 +443,7 @@ sendMessage = (id, message, fb) => {
 },
 
 checkSubscribed = (id) => {
-  return !!data.users[id] && !data.users[id].unsubscribed;
+  return !!data.users[id] && !data.users[id].stoped;
 },
 
 sentUnfinishedMessage = () => {
@@ -706,7 +706,7 @@ sendPost2All = (postId) => {
 
   let users = Object.keys(data.users);
   users.forEach( (userId, i) => {
-    if(data.users[userId].unsubscribed) return true;
+    if(data.users[userId].stoped) return true;
     setTimeout(() => {
       sendPost(userId, postId);
     }, i*config.waitForPosts*2);
@@ -776,7 +776,7 @@ broadcastMessage = (userId) => {
 
       let users = Object.keys(data.users);
       users.forEach( (uid, i) => {
-        if(data.users[uid].unsubscribed) return true;
+        if(data.users[uid].stoped) return true;
         setTimeout(() => {
           for(let i=0, msglen = msgs.length; i < msglen; i++)
           {
@@ -806,7 +806,7 @@ broadcastMessage = (userId) => {
                   message_id: msgs[i]
                 }, sendErr);
               }
-            }, i*config.waitForPosts, i); //TODO: use another var time calc, i skipped for unsubscribed users
+            }, i*config.waitForPosts, i); //TODO: use another var time calc, i skipped for stoped users
           }
         }, i*config.waitForPosts*2);
       });
@@ -871,11 +871,11 @@ sendStatus = (userId) => {
   users.forEach( (userId, i) => {
     if(userId>0)
     {
-      status[data.users[userId].unsubscribed ? 'Users Stoped' : 'Users']++;
+      status[data.users[userId].stoped ? 'Users Stoped' : 'Users']++;
     }
     else
     {
-      status[data.users[userId].unsubscribed ? 'Groups Stoped' : 'Groups']++;
+      status[data.users[userId].stoped ? 'Groups Stoped' : 'Groups']++;
     }
   });
 
