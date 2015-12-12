@@ -55,7 +55,7 @@ loadData = () => {
   console.log('loadData');
 
   data.posts = read('posts', {});
-  console.log(`${data.posts.length} posts loaded`);
+  console.log(`${Object.keys(data.posts).length} posts loaded`);
 
   data.users = read('users', {});
   console.log(`${Object.keys(data.users).length} users loaded`);
