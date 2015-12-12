@@ -687,6 +687,7 @@ getPost = (postId) => {
 setPost = (postId, postContent) => {
   postId = (postId+'').toLowerCase().trim().replace(' ', '_');
   data.posts[postId] = postContent;
+  sortPosts();
   saveContents();
 },
 
@@ -910,6 +911,26 @@ makeBackup = (userId) => {
     chat_id: userId,
     document: 'stores/users.json'
   }, callBack);
+},
+
+sortPosts = () => {
+  console.log('sortPosts');
+  let
+  newPosts = {},
+  posts = Object.keys(data.posts)
+  ;
+
+  // sort posts with numerical support
+  posts.sort(function (a, b){
+    return a.localeCompare(b, 'en', {numeric: true});
+  });
+
+  // save new posts
+  posts.forEach( (postId, i) => {
+    newPosts[postId] = data.posts[postId];
+  });
+  data.posts = newPosts;
+  saveContents();
 }
 ;
 
