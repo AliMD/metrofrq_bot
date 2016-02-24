@@ -887,8 +887,8 @@ sendStatus = (userId) => {
   let posts = Object.keys(data.posts); // array of all post id's
   status['Posts Length'] = posts.length;
   posts.forEach( (postId, i) => {
-    status['Posts Sent'][postId] = getPost(postId).sent_count;
-    status['All Posts Sent'] += status['Posts Sent'][postId];
+    status['Posts Sent'][postId] = (getPost(postId) || {}).sent_count;
+    status['All Posts Sent'] += status['Posts Sent'][postId] || 0;
   });
 
   let breakStr = '  "Posts Sent"';
