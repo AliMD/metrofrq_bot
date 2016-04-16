@@ -49,6 +49,9 @@ makeBot = function (){
 
 botEvents = () => {
   bot.on('message', onMessage);
+  bot.on('inline.query', onInlineQuery);
+  bot.on('inline.result', onInlineResult);
+  bot.on('inline.callback.query', onInlineCallbackQuery);
 },
 
 loadData = () => {
@@ -289,6 +292,19 @@ onMessage = (msg) => {
     notifyAdmins(msg.message_id, msg.from.id);
   }
 },
+
+onInlineQuery = (data) => {
+  console.log("onInlineQuery: ", stringify(data));
+},
+
+onInlineResult = (data) => {
+  console.log("onInlineResult: ", stringify(data));
+},
+
+onInlineCallbackQuery = (data) => {
+  console.log("onInlineResult: ", stringify(data));
+},
+
 
 subscribe = (user, from) => {
   console.log('subscribe');
