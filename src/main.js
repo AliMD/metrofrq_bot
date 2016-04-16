@@ -357,8 +357,7 @@ sendText = (id, text, fb) => {
   console.log(`sendMText(${username}): ${text}`);
   bot.sendMessage({
     chat_id: id,
-    text: text,
-    parse_mode: 'Markdown'
+    text: text
   }, (err, data) => {
     if (!err) return fb ? fb(data) : null;
     // else
@@ -390,8 +389,7 @@ sendMessage = (id, message, fb) => {
     console.log(`bot.sendMessage: ${message.text}`);
     bot.sendMessage({
       chat_id: id,
-      text: message.text,
-      parse_mode: 'Markdown'
+      text: message.text
     }, callBack);
   }
 
