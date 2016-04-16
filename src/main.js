@@ -293,16 +293,50 @@ onMessage = (msg) => {
   }
 },
 
-onInlineQuery = (data) => {
-  console.log("onInlineQuery: ", stringify(data));
+onInlineQuery = (query) => {
+  console.log("===> onInlineQuery: ", stringify(query));
+
+  var
+  post = data.posts['test'].messages[0],
+  results = [{
+    type: "photo",
+    id: 1,
+    photo_file_id: post.photo.id,
+    title: "title1",
+    description: "description1",
+    caption: "caption1",
+    input_message_content: {
+      message_text: "message_text1"
+    }
+  }]
+  ;
+
+  console.log("results: " + stringify(results));
+
+  bot.answerInlineQuery({
+    inline_query_id: query.id,
+    results: results,
+    cache_time: 1,
+    is_personal: false,
+    next_offset: ""
+  }, (err, data) => {
+    console.log("answerInlineQueryCallback: " + stringify({err: err, query: query}));
+  })
+  .then((data) => {
+    console.log("answerInlineQuerySuccess: " + stringify(data))
+  })
+  .catch((err) => {
+    console.log("answerInlineQueryError: " + stringify({err: err, query: query}));
+  })
+  ;
 },
 
-onInlineResult = (data) => {
-  console.log("onInlineResult: ", stringify(data));
+onInlineResult = (query) => {
+  console.log("===> onInlineResult: ", stringify(query));
 },
 
-onInlineCallbackQuery = (data) => {
-  console.log("onInlineResult: ", stringify(data));
+onInlineCallbackQuery = (query) => {
+  console.log("===> onInlineResult: ", stringify(query));
 },
 
 
