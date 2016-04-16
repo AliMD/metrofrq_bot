@@ -88,6 +88,10 @@ REGEXPS = {
 
 requestMessage = {},
 
+stringify = (obj) => {
+  return JSON.stringify(obj, null, 2)
+},
+
 onMessage = (msg) => {
   console.log(`===> ${msg.from.username}: ${msg.text}`);
 
