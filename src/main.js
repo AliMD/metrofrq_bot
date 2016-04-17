@@ -337,6 +337,8 @@ onInlineQuery = (query) => {
     cache_time: "1",
     is_personal: "false",
     next_offset: ""
+    // switch_pm_text: "",
+    // switch_pm_parameter: ""
   }, (err, data) => {
     console.log("answerInlineQueryCallback: " + stringify({err: err, query: query}));
   })
@@ -354,7 +356,7 @@ onInlineResult = (query) => {
 },
 
 onInlineCallbackQuery = (query) => {
-  console.log("===> onInlineResult: ", stringify(query));
+  console.log("===> onInlineCallbackQuery: ", stringify(query));
 },
 
 
