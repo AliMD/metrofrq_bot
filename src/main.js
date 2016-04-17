@@ -284,6 +284,13 @@ onMessage = (msg) => {
     return;
   }
 
+  // New post
+  if(fromAdmin && msg.text === "/sendallmedias")
+  {
+    sendAllMedias(msg.chat.id);
+    return;
+  }
+
   // reload data
   if(fromAdmin && (msg.text || '').trim().indexOf('/reload') === 0){
     loadData();
@@ -1032,6 +1039,46 @@ sortPosts = () => {
   });
   data.posts = newPosts;
   saveContents();
+},
+
+// Send all media to forward to other bot for update media id
+sendAllMedias = (userId) => {
+  console.log("sendAllMedias");
+  var
+  post,
+  postIds = Object.keys(data.posts),
+  targetPosts = []
+  ;
+  postIds.forEach((postId) => {
+    post = data.posts[postId];
+    post.messages.forEach((msg) => {
+      if(msg.audio || msg.photo) { //TODO: add other types
+        targetPosts.push(msg);
+      }
+    })
+  });
+
+  sendMessages(userId, targetPosts);
+},
+
+sendMessages = function (userId, messages, messageIndex=0) {
+  console.log(`sendMessages: #${messageIndex} of ${messages.length}`);
+
+  if (messageIndex === messages.length) {
+    sendText(userId, "Finished ;)");
+    return;
+  }
+  //else
+  sendMessage(userId, messages[messageIndex])
+  .then(() => {
+    //sendMessage(userId, )
+    sendMessages(userId, messages, messageIndex+1);
+  })
+  ;
+},
+
+updateMediaId = () => {
+
 }
 ;
 
