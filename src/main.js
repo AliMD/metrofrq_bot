@@ -14,7 +14,7 @@ config = {
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
-  admins: [58389411, 34815606, 65195363], // TODO: load from external config
+  admins: [58389411], //, 34815606, 65195363 TODO: load from external config
   debugMsgs: false
 },
 
@@ -49,6 +49,9 @@ makeBot = function (){
 
 botEvents = () => {
   bot.on('message', onMessage);
+  bot.on('inline.query', onInlineQuery);
+  bot.on('inline.result', onInlineResult);
+  bot.on('inline.callback.query', onInlineCallbackQuery);
 },
 
 loadData = () => {
@@ -87,6 +90,10 @@ REGEXPS = {
 //TODO: fix msg text length
 
 requestMessage = {},
+
+stringify = (obj) => {
+  return JSON.stringify(obj, null, 2)
+},
 
 onMessage = (msg) => {
   console.log(`===> ${msg.from.username}: ${msg.text}`);
@@ -286,6 +293,73 @@ onMessage = (msg) => {
   }
 },
 
+onInlineQuery = (query) => {
+  console.log("===> onInlineQuery: ", stringify(query));
+
+  var
+  post = data.posts['test'].messages,
+  results = [{
+  //   type: "photo",
+  //   id: "1",
+  //   photo_file_id: post[0].photo.id,
+  //   title: "title1",
+  //   description: "description1",
+  //   caption: "caption1"
+  // },
+  //{
+    type: "audio",
+    id: "2",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
+  },
+  {
+    type: "audio",
+    id: "3",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
+  },
+  {
+    type: "audio",
+    id: "4",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
+  }]
+  ;
+
+  console.log("results: " + stringify(results));
+
+  bot.answerInlineQuery({
+    inline_query_id: query.id,
+    results: results,
+    cache_time: "1",
+    is_personal: "false",
+    next_offset: ""
+    // switch_pm_text: "",
+    // switch_pm_parameter: ""
+  }, (err, data) => {
+    console.log("answerInlineQueryCallback: " + stringify({err: err, query: query}));
+  })
+  .then((data) => {
+    console.log("answerInlineQuerySuccess: " + stringify(data))
+  })
+  .catch((err) => {
+    console.log("answerInlineQueryError: " + stringify({err: err, query: query}));
+  })
+  ;
+},
+
+onInlineResult = (query) => {
+  console.log("===> onInlineResult: ", stringify(query));
+},
+
+onInlineCallbackQuery = (query) => {
+  console.log("===> onInlineCallbackQuery: ", stringify(query));
+},
+
+
 subscribe = (user, from) => {
   console.log('subscribe');
   console.log(user);
@@ -357,8 +431,7 @@ sendText = (id, text, fb) => {
   console.log(`sendMText(${username}): ${text}`);
   bot.sendMessage({
     chat_id: id,
-    text: text,
-    parse_mode: 'Markdown'
+    text: text
   }, (err, data) => {
     if (!err) return fb ? fb(data) : null;
     // else
@@ -390,8 +463,7 @@ sendMessage = (id, message, fb) => {
     console.log(`bot.sendMessage: ${message.text}`);
     bot.sendMessage({
       chat_id: id,
-      text: message.text,
-      parse_mode: 'Markdown'
+      text: message.text
     }, callBack);
   }
 
