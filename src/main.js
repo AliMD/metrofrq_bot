@@ -297,17 +297,35 @@ onInlineQuery = (query) => {
   console.log("===> onInlineQuery: ", stringify(query));
 
   var
-  post = data.posts['test'].messages[0],
+  post = data.posts['test'].messages,
   results = [{
-    type: "photo",
-    id: 1,
-    photo_file_id: post.photo.id,
-    title: "title1",
-    description: "description1",
-    caption: "caption1",
-    input_message_content: {
-      message_text: "message_text1"
-    }
+  //   type: "photo",
+  //   id: "1",
+  //   photo_file_id: post[0].photo.id,
+  //   title: "title1",
+  //   description: "description1",
+  //   caption: "caption1"
+  // },
+  //{
+    type: "audio",
+    id: "2",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
+  },
+  {
+    type: "audio",
+    id: "3",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
+  },
+  {
+    type: "audio",
+    id: "4",
+    audio_file_id: post[1].audio.id,
+    title: post[1].audio.title,
+    performer: post[1].audio.performer
   }]
   ;
 
