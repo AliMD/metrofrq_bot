@@ -135,9 +135,14 @@ onMessage = (msg) => {
   //Start or Subscribe
   if (REGEXPS.subscribe.test(msg.text))
   {
-    // if(msg.text.length>7)
-    subscribe(msg.from); // TODO: fix bug on user sent start in group
-    return;
+    let offset = "/start ".length;
+    if(msg.text.length>offset) {
+      if(!checkSubscribed(msg.from.id)) subscribe(msg.from);
+      msg.text = msg.text.substr(offset);
+    } else {
+      subscribe(msg.from); // TODO: fix bug on user sent start in group
+      return;
+    }
     // if (msg.chat.id !== msg.from.id && !checkSubscribed(msg.chat.id))
     // {
     //   subscribe(msg.chat);
