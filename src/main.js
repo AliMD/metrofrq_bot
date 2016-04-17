@@ -979,26 +979,36 @@ makeBackup = (userId) => {
   console.log('makeBackup');
   saveContents(true);
 
-  let callBack = (err, data) => {
-    if (!err) return;
-    // else
-    let
-    errObj = JSON.stringify({err: err, data: data}, null, 2),
-    errDesc = `makeBackup error!\n${errObj}`
+  return new Promise((resolve, reject) => {
+    var callBack = (err) => {
+      let errDesc = stringify(err);
+      console.log(`makeBackup error: ${errDesc}`);
+      sendText(userId, errDesc)
+      .then(() => {
+        reject(err);
+      });
+    };
+
+    bot.sendDocument({
+      chat_id: userId,
+      document: 'stores/posts.json'
+    })
+    .then(() => {
+      bot.sendDocument({
+        chat_id: userId,
+        document: 'stores/users.json'
+      })
+      .then((data) => {
+        resolve(data);
+      })
+      .catch(callBack)
+      ;
+    })
+    .catch(callBack)
     ;
-    console.log(errDesc);
-    sendText(userId, errDesc);
-  }
+  });
+},
 
-  bot.sendDocument({
-    chat_id: userId,
-    document: 'stores/posts.json'
-  }, callBack);
-
-  bot.sendDocument({
-    chat_id: userId,
-    document: 'stores/users.json'
-  }, callBack);
 },
 
 sendLog = (userId) => {
