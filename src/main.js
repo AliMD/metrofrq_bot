@@ -1065,39 +1065,23 @@ sortPosts = () => {
 },
 
 // Send all media to forward to other bot for update media id
-sendAllMedias = (userId) => {
+sendAllMedias = async (userId) => {
   console.log("sendAllMedias");
-  var
-  post,
-  postIds = Object.keys(data.posts),
-  targetPosts = []
-  ;
-  postIds.forEach((postId) => {
-    post = data.posts[postId];
-    post.messages.forEach((msg) => {
-      if(msg.audio || msg.photo) { //TODO: add other types
-        targetPosts.push(msg);
+
+  for (let postId in data.posts) {
+    // console.log(postId);
+    let post = data.posts[postId];
+    for (let messageId in post.messages) {
+      // console.log(messageId);
+      let message = post.messages[messageId];
+      if(message.audio || message.photo) { //TODO: add other types
+        await sendMessage(userId, message);
       }
-    })
-  });
-
-  sendMessages(userId, targetPosts);
-},
-
-sendMessages = function (userId, messages, messageIndex=0) {
-  console.log(`sendMessages: #${messageIndex} of ${messages.length}`);
-
-  if (messageIndex === messages.length) {
-    sendText(userId, "Finished ;)");
-    return;
+    }
   }
-  //else
-  sendMessage(userId, messages[messageIndex])
-  .then(() => {
-    //sendMessage(userId, )
-    sendMessages(userId, messages, messageIndex+1);
-  })
-  ;
+
+  await sendText(userId, "Finished ;)");
+  return true;
 },
 
 updateMediasIds = () => {
