@@ -445,65 +445,63 @@ sendText = (id, text) => {
   });
 },
 
-sendMessage = (id, message, fb) => {
+sendMessage = (id, message) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
   console.log(`sendMessage(${username}): ${message.id}`);
 
-  let callBack = (err, data) => {
-    if (!err) return fb ? fb(data) : null;
-    // else
-    let
-    errObj = JSON.stringify({err: err, data: data}, null, 2),
-    errDesc = `error!\n${errObj}`
-    ;
-    console.log(errDesc);
-    //TODO: add to a waiting list
+  var callBack = (err) => {
+    console.log(`sendMessage err: ${stringify(err)}`);
   }
 
   if (message.text) {
     console.log(`bot.sendMessage: ${message.text}`);
-    bot.sendMessage({
+    return bot.sendMessage({
       chat_id: id,
       text: message.text
-    }, callBack);
+    })
+    .catch(callBack);
   }
 
   else if (message.audio) {
     console.log(`bot.sendAudio: ${message.audio.id}`);
-    bot.sendAudio({
+    return bot.sendAudio({
       chat_id: id,
       audio: message.audio.id,
       performer: message.audio.performer,
       title: message.audio.title
-    }, callBack);
+    })
+    .catch(callBack);
   }
 
   else if (message.voice) {
     console.log('bot.sendVoice');
     // TODO: fix sendVoice
-    bot.sendAudio({
+    return bot.sendAudio({
       chat_id: id,
       audio: message.voice.id
-    }, callBack);
+    })
+    .catch(callBack);
   }
 
   else if (message.sticker) {
     console.log('bot.sendSticker');
-    bot.sendSticker({
+    return bot.sendSticker({
       chat_id: id,
       sticker: message.sticker.id
-    }, callBack);
+    })
+    .catch(callBack);
   }
 
   else if (message.photo) {
     console.log('bot.sendPhoto');
-    bot.sendPhoto({
+    return bot.sendPhoto({
       chat_id: id,
       photo: message.photo.id
       //TODO: fix caption
-    }, callBack);
+    })
+    .catch(callBack);
   }
 
   else if (message.contact) {
@@ -513,10 +511,11 @@ sendMessage = (id, message, fb) => {
 
   else if (message.document) {
     console.log('bot.sendDocument');
-    bot.sendDocument({
+    return bot.sendDocument({
       chat_id: id,
       document: message.document.id
-    }, callBack);
+    })
+    .catch(callBack);
   }
 },
 
