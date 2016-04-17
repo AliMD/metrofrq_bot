@@ -97,6 +97,7 @@ stringify = (obj) => {
 
 onMessage = (msg) => {
   console.log(`===> ${msg.from.username}: ${msg.text}`);
+  // console.log(stringify(msg));
 
   let
   msgDate = new Date(msg.date*1000),
@@ -129,6 +130,23 @@ onMessage = (msg) => {
   {
     requestMessage[msg.from.id](msg);
     return;
+  }
+
+  //Start or Subscribe
+  if (REGEXPS.subscribe.test(msg.text))
+  {
+    let offset = "/start ".length;
+    if(msg.text.length>offset) {
+      if(!checkSubscribed(msg.from.id)) subscribe(msg.from);
+      msg.text = msg.text.substr(offset);
+    } else {
+      subscribe(msg.from); // TODO: fix bug on user sent start in group
+      return;
+    }
+    // if (msg.chat.id !== msg.from.id && !checkSubscribed(msg.chat.id))
+    // {
+    //   subscribe(msg.chat);
+    // }
   }
 
   //Debug and test
@@ -165,18 +183,6 @@ onMessage = (msg) => {
   {
     sendText(msg.chat.id, l10n('hello').replace('%name%', msg.from.first_name));
     return;
-  }
-
-
-  //User Subscribe
-  if (REGEXPS.subscribe.test(msg.text))
-  {
-    subscribe(msg.from); // TODO: fix bug on user sent start in group
-    return;
-    // if (msg.chat.id !== msg.from.id && !checkSubscribed(msg.chat.id))
-    // {
-    //   subscribe(msg.chat);
-    // }
   }
 
 
