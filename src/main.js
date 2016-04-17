@@ -431,21 +431,17 @@ saveContents = (force) => {
   }
 },
 
-sendText = (id, text, fb) => {
+sendText = (id, text) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
-  console.log(`sendMText(${username}): ${text}`);
-  bot.sendMessage({
+  console.log(`sendText(${username}): ${text}`);
+  return bot.sendMessage({
     chat_id: id,
     text: text
-  }, (err, data) => {
-    if (!err) return fb ? fb(data) : null;
-    // else
-    console.log('sendText error!');
-    console.log(err);
-    console.log(data);
-    //TODO: add to a waiting list
+  })
+  .catch((err) => {
+    console.log(`sendText error: ${stringify(err)}`);
   });
 },
 
