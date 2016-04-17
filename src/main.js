@@ -272,8 +272,14 @@ onMessage = (msg) => {
   // make backup
   if(fromAdmin && (msg.text || '').trim().indexOf('/backup') === 0)
   {
-    saveContents(true);
     makeBackup(msg.from.id);
+    return;
+  }
+
+  // restore backup
+  if(fromAdmin && (msg.text || '').trim().indexOf('/restore') === 0)
+  {
+    restoreBackup(msg.from.id);
     return;
   }
 
@@ -445,7 +451,7 @@ saveContents = (force) => {
   }
 },
 
-sendText = (id, text) => {
+sendText = async (id, text) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
@@ -459,7 +465,7 @@ sendText = (id, text) => {
   });
 },
 
-sendMessage = (id, message) => {
+sendMessage = async (id, message) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
@@ -983,29 +989,39 @@ sendStatus = (userId) => {
   sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
 },
 
-makeBackup = (userId) => {
+makeBackup = async (userId) => {
   console.log('makeBackup');
+  saveContents(true);
 
-  let callBack = (err, data) => {
-    if (!err) return;
-    // else
-    let
-    errObj = JSON.stringify({err: err, data: data}, null, 2),
-    errDesc = `makeBackup error!\n${errObj}`
-    ;
-    console.log(errDesc);
-    sendText(userId, errDesc);
-  }
+  // var callBack = (err) => {
+  //   let errDesc = stringify(err);
+  //   console.log(`makeBackup error: ${errDesc}`);
+  //   sendText(userId, errDesc)
+  //   .then(() => {
+  //     reject(err);
+  //   });
+  // };
 
-  bot.sendDocument({
+  await bot.sendDocument({
     chat_id: userId,
     document: 'stores/posts.json'
-  }, callBack);
-
-  bot.sendDocument({
+  })
+  await bot.sendDocument({
     chat_id: userId,
     document: 'stores/users.json'
-  }, callBack);
+  })
+
+  return true;
+},
+
+restoreBackup = async (userId) => {
+  console.log('restoreBackup');
+
+  await sendText(userId, "Make backup first")
+  await makeBackup(userId)
+
+  // TODO: restore backup ...
+  await sendText(userId, "restore is under develope ;)");
 },
 
 sendLog = (userId) => {
