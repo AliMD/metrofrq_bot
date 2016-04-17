@@ -284,10 +284,17 @@ onMessage = (msg) => {
     return;
   }
 
-  // New post
+  // Send all medias
   if(fromAdmin && msg.text === "/sendallmedias")
   {
     sendAllMedias(msg.chat.id);
+    return;
+  }
+
+  // Update media
+  if(fromAdmin && msg.text === "/updatemedia")
+  {
+    updateMediasIds(msg.chat.id);
     return;
   }
 
