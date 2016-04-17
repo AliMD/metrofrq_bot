@@ -1077,7 +1077,7 @@ sendMessages = function (userId, messages, messageIndex=0) {
   ;
 },
 
-updateMediaId = () => {
+updateMediasIds = () => {
 
 }
 ;
