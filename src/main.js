@@ -316,8 +316,8 @@ onInlineQuery = (query) => {
   bot.answerInlineQuery({
     inline_query_id: query.id,
     results: results,
-    cache_time: 1,
-    is_personal: false,
+    cache_time: "1",
+    is_personal: "false",
     next_offset: ""
   }, (err, data) => {
     console.log("answerInlineQueryCallback: " + stringify({err: err, query: query}));
