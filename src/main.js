@@ -1017,6 +1017,16 @@ makeBackup = (userId) => {
 },
 
 restoreBackup = (userId) => {
+  sendText(userId, "Make backup first")
+  .then(() => {
+    makeBackup(userId)
+    .then(() => {
+      console.log('restoreBackup');
+      // TODO: restore backup ...
+    })
+    ;
+  })
+  ;
 },
 
 sendLog = (userId) => {
