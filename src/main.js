@@ -276,6 +276,13 @@ onMessage = (msg) => {
     return;
   }
 
+  // restore backup
+  if(fromAdmin && (msg.text || '').trim().indexOf('/restore') === 0)
+  {
+    restoreBackup(msg.from.id);
+    return;
+  }
+
   // send log
   if(fromAdmin && (msg.text || '').trim().indexOf('/log') === 0)
   {
@@ -1009,6 +1016,7 @@ makeBackup = (userId) => {
   });
 },
 
+restoreBackup = (userId) => {
 },
 
 sendLog = (userId) => {
