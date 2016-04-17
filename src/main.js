@@ -272,7 +272,6 @@ onMessage = (msg) => {
   // make backup
   if(fromAdmin && (msg.text || '').trim().indexOf('/backup') === 0)
   {
-    saveContents(true);
     makeBackup(msg.from.id);
     return;
   }
@@ -978,6 +977,7 @@ sendStatus = (userId) => {
 
 makeBackup = (userId) => {
   console.log('makeBackup');
+  saveContents(true);
 
   let callBack = (err, data) => {
     if (!err) return;
