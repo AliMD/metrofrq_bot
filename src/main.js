@@ -1094,8 +1094,65 @@ matchText = (str1, str2) => {
   return (matched / Math.max(str2.length));
 },
 
-updateMediasIds = () => {
+updateMediasIds = async (userId) => {
+  await sendText(userId, 'send medias or /end');
 
+  requestMessage[userId] = async (msg) => {
+    console.log(msg);
+
+    if (msg.text === '/end') {
+      await sendText(userId, "Finished.");
+      delete requestMessage[userId];
+      return;
+    }
+
+    var
+    userMediaId,
+    msg = ''
+    ;
+
+    if (msg.photo) {
+      userMediaId = msg.photo.id;
+    }
+
+    else if (msg.audio) {
+      userMediaId = msg.audio.id;
+    }
+
+    else {
+      await sendText(userId, 'Please send valid media!');
+      return;
+    }
+
+    for (let postId in data.posts) {
+      // console.log(postId);
+      let post = data.posts[postId];
+      for (let messageId in post.messages) {
+        // console.log(messageId);
+        let
+        message = post.messages[messageId],
+        postMediaId
+        ;
+
+        if (message.photo) {
+          postMediaId = message.photo.id
+        }
+
+        else if (message.audio) {
+          postMediaId = message.audio.id
+        }
+
+        else {
+          continue;
+        }
+
+        let matchId = matchText(postMediaId, userMediaId);
+        msg += `${postId} m${messageId}: ${matchId}\n`;
+      }
+    }
+  }
+
+  sendText(userId, msg);
 }
 ;
 
