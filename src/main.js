@@ -33,6 +33,8 @@ init = () => {
   makeBot();
   botEvents();
   getBotInfo();
+
+  notifyAdmins(`Bot engine restarted!`);
 },
 
 bot,
@@ -1044,8 +1046,9 @@ deletePost = async (userId) => {
 
   var msg = 'list of posts :\n\n';
   for(let i in postIds) {
-    msg = `${i}: ${postIds[i]}`;
+    msg += `${i}: ${postIds[i]}\n`;
   }
+  await sendText(userId, msg);
 
   requestMessage[userId] = async (msg) => {
     if(msg.text === '/cancel') {
@@ -1054,10 +1057,14 @@ deletePost = async (userId) => {
 
     let id = parseInt(fixNumbers(msg.text));
     if(!isNaN(id) && id>-1 && id<postIds.length) {
-      await sendText('Sending backup before change.');
-      await makeBackup();
+      await sendText(userId, 'Sending backup before change.');
+      await makeBackup(userId);
+
       delete data.posts[postIds[id]];
-      await sendText(`Post "${postIds[id]}" deleted!`);
+      delete requestMessage[userId];
+      saveContents();
+
+      sendText(userId, `Post "${postIds[id]}" deleted!`);
     } else {
       await sendText(userId, `Please send a valid number (0 - ${postIds.length-1})`);
     }
