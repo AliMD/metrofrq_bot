@@ -181,7 +181,8 @@ onMessage = (msg) => {
   //Hello
   if (REGEXPS.hello.test(msg.text))
   {
-    sendText(msg.chat.id, l10n('hello').replace('%name%', msg.from.first_name));
+    // sendText(msg.chat.id, l10n('hello').replace('%name%', msg.from.first_name))
+    sayHello(msg.chat.id);
     return;
   }
 
@@ -451,7 +452,7 @@ saveContents = (force) => {
   }
 },
 
-sendText = async (id, text) => {
+sendText = async (id, text, cb) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
@@ -459,7 +460,7 @@ sendText = async (id, text) => {
   return bot.sendMessage({
     chat_id: id,
     text: text
-  })
+  }, cb)
   .catch((err) => {
     console.log(`sendText error: ${stringify(err)}`);
   });
@@ -1063,6 +1064,154 @@ sortPosts = () => {
   data.posts = newPosts;
   saveContents();
 },
+
+/////////////////////////////////
+
+
+sayHello = (userId) => {
+  sendText(userId, 'Hello ;)', (err, data) => {
+    if(!err){
+      console.log('Sent.');
+    } else {
+      console.log(`err: ${stringify(err)}`);
+    }
+  });
+
+  sendText(userId, 'Hello2 ;)', (err, data) => {
+    if(!err){
+      console.log('Sent.');
+    } else {
+      console.log(`err: ${stringify(err)}`);
+    }
+  });
+
+  sendText(userId, 'Hello3 ;)', (err, data) => {
+    if(!err){
+      console.log('Sent.');
+    } else {
+      console.log(`err: ${stringify(err)}`);
+    }
+  });
+},
+
+
+sayHello0 = (userId) => {
+  sendText(userId, 'Hello ;)', (err, data) => {
+    if(!err){
+
+      sendText(userId, 'I\'m a robot!', (err, data) => {
+        if(!err){
+
+          sendText(userId, 'How are you ?', (err, data) => {
+            if(!err){
+              console.log('Sent.');
+            } else {
+              console.log(`err: ${stringify(err)}`);
+            }
+          });
+
+        } else {
+          console.log(`err: ${stringify(err)}`);
+        }
+      });
+
+    } else {
+      console.log(`err: ${stringify(err)}`);
+    }
+  });
+
+
+
+
+},
+
+
+sayHello = (userId) => {
+  sendText(userId, 'Hello ;)')
+  .then((data) => {
+    sendText(userId, 'Hello ;)')
+    .then((data) => {
+      sendText(userId, 'Hello ;)')
+      .then((data) => {
+        console.log("Send!");
+      })
+    })
+  })
+  .catch((err) => {
+    console.log(`err: ${stringify(err)}`);
+  });
+},
+
+
+sayHello = (userId) => {
+  sendText(userId, 'Hello ;)')
+  .then((data) => {
+    return sendText(userId, 'I\'m a robot!');
+  })
+  .then((data) => {
+    return sendText(userId, 'How are you?');
+  })
+  .then((data) => {
+    return sendText(userId, 'What\'s up?');
+  })
+  .then((data) => {
+    console.log("All Sent.");
+  })
+  .catch((err) => {
+    console.log(`err: ${stringify(err)}`);
+  });
+},
+
+sayHello = (userId) => {
+  var msgs = [
+    'Hello ;)',
+    'I\'m a robot!',
+    'How are you?',
+    'What\'s up?'
+  ]
+
+  var sendMsg = (i) => {
+    sendText(userId, msgs[i])
+    .then((data) => {
+      if(i<msgs.length-1) sendMsg(i+1);
+    })
+  };
+  sendMsg(0);
+},
+
+sayHello = async (userId) => {
+  var msgs = [
+    'Hello ;)',
+    'I\'m a robot!',
+    'How are you?',
+    'What\'s up?'
+  ];
+
+  for (let i in msgs) {
+    await sendText(userId, msgs[i]);
+  }
+},
+
+sayHello0 = (userId) => {
+  var msgs = [
+    'Hello ;)',
+    'I\'m a robot!',
+    'How are you?',
+    'What\'s up?'
+  ];
+
+  var sendMsg = (i) => {
+    sendText(userId, msgs[i])
+    .then((data) => {
+      if(i<msgs.length-1) sendMsg(i+1);
+    });
+  };
+  sendMsg(0);
+},
+
+
+
+/////////////////////////////////
 
 // Send all media to forward to other bot for update media id
 sendAllMedias = async (userId) => {
