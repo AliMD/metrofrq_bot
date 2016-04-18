@@ -222,6 +222,13 @@ onMessage = (msg) => {
     return;
   }
 
+  //Delete post
+  if(fromAdmin && msg.text === "/deletepost")
+  {
+    deletePost(msg.chat.id);
+    return;
+  }
+
   // Send post
   if(msg.text)
   {
@@ -1029,6 +1036,32 @@ sortPosts = () => {
   });
   data.posts = newPosts;
   saveContents();
+},
+
+deletePost = async (userId) => {
+  var postIds = Object.keys(data.posts);
+  await sendText(userId, `Select post number from 0 to ${postIds.length-1}\n\nor /cancel`);
+
+  var msg = 'list of posts :\n\n';
+  for(let i in postIds) {
+    msg = `${i}: ${postIds[i]}`;
+  }
+
+  requestMessage[userId] = async (msg) => {
+    if(msg.text === '/cancel') {
+      delete requestMessage[userId];
+    }
+
+    let id = parseInt(fixNumbers(msg.text));
+    if(!isNaN(id) && id>-1 && id<postIds.length) {
+      await sendText('Sending backup before change.');
+      await makeBackup();
+      delete data.posts[postIds[id]];
+      await sendText(`Post "${postIds[id]}" deleted!`);
+    } else {
+      await sendText(userId, `Please send a valid number (0 - ${postIds.length-1})`);
+    }
+  }
 },
 
 // Send all media to forward to other bot for update media id
