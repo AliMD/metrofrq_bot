@@ -1086,7 +1086,24 @@ sendAllMedias = async (userId) => {
 
 updateMediasIds = () => {
 
+},
+
+//special for metro
+findLatestPosts = () => {
+  var target, latestPosts = [];
+
+  for(var line = 1; data.posts[`${line}_1`]; line++){}
+  line--;
+  console.log(line);
+
+  for(var station = 1; target = data.posts[`${line}_${station}`]; station++){
+    latestPosts.push(target);
+    console.log(`${line}_${station}`);
+  }
+
+  return latestPosts;
 }
 ;
 
 init();
+findLatestPosts();
