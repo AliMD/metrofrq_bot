@@ -14,7 +14,7 @@ config = {
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
-  admins: [58389411], //, 34815606, 65195363 TODO: load from external config
+  admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false
 },
 
@@ -33,6 +33,8 @@ init = () => {
   makeBot();
   botEvents();
   getBotInfo();
+
+  notifyAdmins(`Bot engine restarted!`);
 },
 
 bot,
@@ -219,6 +221,20 @@ onMessage = (msg) => {
   if(fromAdmin && msg.text === "/newpost")
   {
     recordNewPost(msg.chat.id);
+    return;
+  }
+
+  //Delete post
+  if(fromAdmin && msg.text === "/deletepost") {
+    deletePost(msg.chat.id);
+    return;
+  }
+
+  //Notify admin
+  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins ') === 0) {
+    msg.text = msg.text.substr('/notifyadmins '.length);
+    console.log(msg.text);
+    if (msg.text.length>1) notifyAdmins(msg.text);
     return;
   }
 
@@ -475,7 +491,7 @@ sendMessage = async (id, message) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
-  console.log(`sendMessage(${username}): ${message.id}`);
+  console.log(`sendMessage(${username}): #${message.id}`);
 
   var callBack = (err) => {
     console.log(`sendMessage err: ${stringify(err)}`);
@@ -734,52 +750,15 @@ fixNumbers = (str) => {
   return str;
 },
 
-sendPost = (userId, postId, skipCount=false) => {
+sendPost = async (userId, postId, skipCount=false) => {
   console.log(`sendPost: ${postId} to ${userId}`);
-  let post = getPost(postId);
+  var post = getPost(postId);
 
-  // if(!post)
-  // {
-  //   sendText(userId, l10n('post404').replace('%max_post_id%', data.posts.length-1))
-  //   return;
-  // }
-
-  for(let i=0, msglen = post.messages.length; i < msglen; i++)
-  {
-    setTimeout((i) => {
-      /*let sendErr = (err, dt) => {
-        if(err)
-        {
-          let debug = JSON.stringify({err: err, data: dt}, null, 2);
-          let errmsg = `sendPost ${postId} to ${userId} error in forward message_id ${post.messages[i]}\n${debug}`;
-          console.log(errmsg);
-          notifyAdmins(errmsg);
-        }
-      };*/
-      //TODO: Fix sendErr callback
-
-      sendMessage(userId, post.messages[i]);
-
-      /*if(typeof post.messages[i] === 'string')
-      {
-        bot.sendMessage({
-          chat_id: userId,
-          text: post.messages[i]
-        }, sendErr)
-      }
-      else
-      {
-        bot.forwardMessage({
-          chat_id: userId,
-          from_chat_id: post.from,
-          message_id: post.messages[i]
-        }, sendErr);
-      }*/
-
-    }, i*config.waitForPosts, i);
+  for(let i in post.messages) {
+    await sendMessage(userId, post.messages[i]);
   }
 
-  if(!skipCount){
+  if (!skipCount) {
     post.sent_count++;
     saveContents();
   }
@@ -793,6 +772,10 @@ getPost = (postId) => {
 
 setPost = (postId, postContent) => {
   postId = (postId+'').toLowerCase().trim().replace(' ', '_');
+  if(data.posts[postId]) {
+    // keep sent_count in post updates
+    postContent.sent_count = data.posts[postId].sent_count;
+  }
   data.posts[postId] = postContent;
   sortPosts();
   saveContents();
@@ -1068,6 +1051,37 @@ sortPosts = () => {
   });
   data.posts = newPosts;
   saveContents();
+},
+
+deletePost = async (userId) => {
+  var postIds = Object.keys(data.posts);
+  await sendText(userId, `Select post number from 0 to ${postIds.length-1}\n\nor /cancel`);
+
+  var msg = 'list of posts :\n\n';
+  for(let i in postIds) {
+    msg += `${i}: ${postIds[i]}\n`;
+  }
+  await sendText(userId, msg);
+
+  requestMessage[userId] = async (msg) => {
+    if(msg.text === '/cancel') {
+      delete requestMessage[userId];
+    }
+
+    let id = parseInt(fixNumbers(msg.text));
+    if(!isNaN(id) && id>-1 && id<postIds.length) {
+      await sendText(userId, 'Sending backup before change.');
+      await makeBackup(userId);
+
+      delete data.posts[postIds[id]];
+      delete requestMessage[userId];
+      saveContents();
+
+      sendText(userId, `Post "${postIds[id]}" deleted!`);
+    } else {
+      await sendText(userId, `Please send a valid number (0 - ${postIds.length-1})`);
+    }
+  }
 },
 
 // Send all media to forward to other bot for update media id
