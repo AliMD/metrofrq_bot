@@ -225,9 +225,16 @@ onMessage = (msg) => {
   }
 
   //Delete post
-  if(fromAdmin && msg.text === "/deletepost")
-  {
+  if(fromAdmin && msg.text === "/deletepost") {
     deletePost(msg.chat.id);
+    return;
+  }
+
+  //Notify admin
+  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins ') === 0) {
+    msg.text = msg.text.substr('/notifyadmins '.length);
+    console.log(msg.text);
+    if (msg.text.length>1) notifyAdmins(msg.text);
     return;
   }
 
