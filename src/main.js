@@ -1084,6 +1084,16 @@ sendAllMedias = async (userId) => {
   return true;
 },
 
+matchText = (str1, str2) => {
+  var matched = 0;
+  for (let i=0; i<str1.length; i++) {
+    if (str1[i] === str2[i]) {
+      matched++;
+    }
+  }
+  return (matched / Math.max(str2.length));
+},
+
 updateMediasIds = () => {
 
 }
