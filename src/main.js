@@ -469,7 +469,7 @@ sendMessage = async (id, message) => {
   let username = data.users[id] ?
                   data.users[id].username ? `@${data.users[id].username}` : `${data.users[id].title}`
                   : `#${id}`;
-  console.log(`sendMessage(${username}): ${message.id}`);
+  console.log(`sendMessage(${username}): #${message.id}`);
 
   var callBack = (err) => {
     console.log(`sendMessage err: ${stringify(err)}`);
@@ -728,52 +728,15 @@ fixNumbers = (str) => {
   return str;
 },
 
-sendPost = (userId, postId, skipCount=false) => {
+sendPost = async (userId, postId, skipCount=false) => {
   console.log(`sendPost: ${postId} to ${userId}`);
-  let post = getPost(postId);
+  var post = getPost(postId);
 
-  // if(!post)
-  // {
-  //   sendText(userId, l10n('post404').replace('%max_post_id%', data.posts.length-1))
-  //   return;
-  // }
-
-  for(let i=0, msglen = post.messages.length; i < msglen; i++)
-  {
-    setTimeout((i) => {
-      /*let sendErr = (err, dt) => {
-        if(err)
-        {
-          let debug = JSON.stringify({err: err, data: dt}, null, 2);
-          let errmsg = `sendPost ${postId} to ${userId} error in forward message_id ${post.messages[i]}\n${debug}`;
-          console.log(errmsg);
-          notifyAdmins(errmsg);
-        }
-      };*/
-      //TODO: Fix sendErr callback
-
-      sendMessage(userId, post.messages[i]);
-
-      /*if(typeof post.messages[i] === 'string')
-      {
-        bot.sendMessage({
-          chat_id: userId,
-          text: post.messages[i]
-        }, sendErr)
-      }
-      else
-      {
-        bot.forwardMessage({
-          chat_id: userId,
-          from_chat_id: post.from,
-          message_id: post.messages[i]
-        }, sendErr);
-      }*/
-
-    }, i*config.waitForPosts, i);
+  for(let i in post.messages) {
+    await sendMessage(userId, post.messages[i]);
   }
 
-  if(!skipCount){
+  if (!skipCount) {
     post.sent_count++;
     saveContents();
   }
