@@ -750,6 +750,10 @@ getPost = (postId) => {
 
 setPost = (postId, postContent) => {
   postId = (postId+'').toLowerCase().trim().replace(' ', '_');
+  if(data.posts[postId]) {
+    // keep sent_count in post updates
+    postContent.sent_count = data.posts[postId].sent_count;
+  }
   data.posts[postId] = postContent;
   sortPosts();
   saveContents();
