@@ -1115,25 +1115,21 @@ updateMediasIds = async (userId) => {
     console.log(msg);
 
     if (msg.text === '/end') {
+      saveContents();
       await sendText(userId, "Finished.");
       delete requestMessage[userId];
       return;
     }
 
     var
-    userMediaId,
-    msg = ''
+    userMedia = msg.audio
     ;
 
-    if (msg.photo) {
-      userMediaId = msg.photo.id;
-    }
+    // if (msg.photo) {
+    //   userMedia = msg.photo[msg.photo.length-1].file_id;
+    // }
 
-    else if (msg.audio) {
-      userMediaId = msg.audio.id;
-    }
-
-    else {
+    if (!userMedia) {
       await sendText(userId, 'Please send valid media!');
       return;
     }
@@ -1145,28 +1141,27 @@ updateMediasIds = async (userId) => {
         // console.log(messageId);
         let
         message = post.messages[messageId],
-        postMediaId
+        postMedia = message.audio
         ;
 
-        if (message.photo) {
-          postMediaId = message.photo.id
-        }
-
-        else if (message.audio) {
-          postMediaId = message.audio.id
-        }
-
-        else {
+        if (!postMedia) {
           continue;
         }
 
-        let matchId = matchText(postMediaId, userMediaId);
-        msg += `${postId} m${messageId}: ${matchId}\n`;
+        let matched = matchText(postMedia.id, userMedia.file_id);
+        if (
+          matched > 0.5 &&
+          postMedia.type == userMedia.mime_type &&
+          postMedia.size == userMedia.file_size &&
+          postMedia.performer == userMedia.performer &&
+          postMedia.title == userMedia.title
+        ) {
+          postMedia.id = userMedia.file_id;
+          await sendText(userId, `Post "${postId}" updated ;)`);
+        }
       }
     }
   }
-
-  sendText(userId, msg);
 }
 ;
 
