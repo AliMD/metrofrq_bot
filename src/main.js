@@ -349,7 +349,7 @@ onInlineQuery = async (query) => {
   console.log("==> onInlineQuery: ", stringify(query));
 
   var
-  latestPosts = findLatestPosts(5), //latest 20 post
+  latestPosts = findLatestPosts(20), //latest 20 post
   results = []
   ;
 
