@@ -377,7 +377,7 @@ onInlineQuery = async (query) => {
     await bot.answerInlineQuery({
       inline_query_id: query.id,
       results: results,
-      cache_time: "1",
+      cache_time: "600", // 10min
       is_personal: "false",
       next_offset: ""
       // switch_pm_text: "",
@@ -400,7 +400,7 @@ onInlineResult = (query) => {
   }
 
   post.sent_count++;
-  post.inline_use = post.inline_use ? post.inline_use++ : 1;
+  post.inline_use = post.inline_use ? post.inline_use+1 : 1;
   saveContents();
 },
 
