@@ -313,14 +313,8 @@ onMessage = (msg) => {
     return;
   }
 
-  // Send all medias
-  if (fromAdmin && msg.text === "/updatemedias") {
-    updateMediasIds(msg.chat.id);
-    return;
-  }
-
-  // Update media
-  if(fromAdmin && msg.text === "/updatemedia")
+  // Update medias
+  if(fromAdmin && msg.text === "/updatemedias")
   {
     updateMediasIds(msg.chat.id);
     return;
