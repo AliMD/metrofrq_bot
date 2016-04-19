@@ -948,6 +948,8 @@ sendStatus = (userId) => {
     'All Users': 0,
 
     'Posts Sent': {},
+    'Inline Sent': {},
+
     'Posts Length': 0,
     'All Posts Sent': 0
   };
@@ -970,11 +972,17 @@ sendStatus = (userId) => {
   let posts = Object.keys(data.posts); // array of all post id's
   status['Posts Length'] = posts.length;
   posts.forEach( (postId, i) => {
-    status['Posts Sent'][postId] = (getPost(postId) || {}).sent_count;
-    status['All Posts Sent'] += status['Posts Sent'][postId] || 0;
+    let post = getPost(postId);
+    if(!post) return true;
+
+    status['Posts Sent'][postId] = post.sent_count;
+    status['All Posts Sent'] += post.sent_count;
+
+    if(post.inline_use) status['Inline Sent'][postId] = post.inline_use;
   });
 
   let breakStr = '  "Posts Sent"';
+  // add enter befor "Posts Sent"
   sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
 },
 
