@@ -346,34 +346,34 @@ findFirstAudioInPost = (post) => {
 },
 
 onInlineQuery = async (query) => {
-  console.log("==> onInlineQuery: ", stringify(query));
-
-  var
-  latestPosts = findLatestPosts(20), //latest 20 post
-  results = []
-  ;
-
-  for (let i in latestPosts) {
-    let
-    post = latestPosts[i],
-    audio = findFirstAudioInPost(post)
-    ;
-    if (!audio) {
-      console.log(`Audio not found in ${post.id}`);
-      continue;
-    }
-    results.push({
-      type: "audio",
-      id: post.id,
-      audio_file_id: audio.id,
-      title: audio.title,
-      performer: audio.performer
-    });
-  }
-
-  console.log("results: " + stringify(results));
-
   try {
+    console.log("==> onInlineQuery: ", stringify(query));
+
+    var
+    latestPosts = findLatestPosts(20), //latest 20 post
+    results = []
+    ;
+
+    for (let i in latestPosts) {
+      let
+      post = latestPosts[i],
+      audio = findFirstAudioInPost(post)
+      ;
+      if (!audio) {
+        console.log(`Audio not found in ${post.id}`);
+        continue;
+      }
+      results.push({
+        type: "audio",
+        id: post.id,
+        audio_file_id: audio.id,
+        title: audio.title,
+        performer: audio.performer
+      });
+    }
+
+    console.log("results: " + stringify(results));
+
     await bot.answerInlineQuery({
       inline_query_id: query.id,
       results: results,
@@ -383,12 +383,12 @@ onInlineQuery = async (query) => {
       // switch_pm_text: "",
       // switch_pm_parameter: ""
     });
+
+    console.log("Sent!");
   }
   catch (err) {
     console.log(err);
   }
-
-  console.log("Sent!");
 },
 
 onInlineResult = (query) => {
