@@ -313,8 +313,8 @@ onMessage = (msg) => {
     return;
   }
 
-  // Update media
-  if(fromAdmin && msg.text === "/updatemedia")
+  // Update medias
+  if(fromAdmin && msg.text === "/updatemedias")
   {
     updateMediasIds(msg.chat.id);
     return;
@@ -1098,8 +1098,87 @@ sendAllMedias = async (userId) => {
   return true;
 },
 
-updateMediasIds = () => {
+matchText = (str1, str2) => {
+  var matched = 0;
+  for (let i=0; i<str1.length; i+=2) {
+    if (str1[i] === str2[i] && str1[i+1] === str2[i+1]) {
+      matched++;
+    }
+  }
+  return (matched*2 / Math.max(str1.length, str2.length));
+},
 
+updateMediasIds = async (userId) => {
+  var updated = 0;
+  await sendText(userId, 'send medias or /end');
+
+  requestMessage[userId] = async (msg) => {
+    // console.log(msg);
+
+    if (msg.text === '/end') {
+      saveContents();
+      await sendText(userId, `${updated} post updated ;)`);
+      delete requestMessage[userId];
+      return;
+    }
+
+    for (let postId in data.posts) {
+      let post = data.posts[postId];
+      for (let messageId in post.messages) {
+        let
+        message = post.messages[messageId]
+        ;
+
+        if (msg.photo && message.photo) {
+          if (updatePhotoPost(msg.photo[msg.photo.length-1], message.photo)) {
+            updated++;
+            await sendText(userId, `Post "${postId}" photo updated ;)`);
+          }
+        }
+
+        else if (msg.audio && message.audio) {
+          if (updateAudioPost(msg.audio, message.audio)) {
+            updated++;
+            await sendText(userId, `Post "${postId}" audio updated ;)`);
+          }
+        }
+      }
+    }
+  }
+},
+
+updateAudioPost = (newMedia, oldMedia) => {
+  let matched = matchText(oldMedia.id, newMedia.file_id);
+  if (
+    oldMedia.type == newMedia.mime_type &&
+    oldMedia.performer == newMedia.performer &&
+    oldMedia.title == newMedia.title
+  ) {
+    if(matched >= 0.6) {
+      oldMedia.id = newMedia.file_id;
+      console.log(`audio match find: ${matched}`);
+      return true;
+    } else {
+      console.log(`audio match skiped: ${matched}`);
+    }
+  }
+
+  return false;
+},
+
+updatePhotoPost = (newMedia, oldMedia) => {
+  let matched = matchText(oldMedia.id, newMedia.file_id);
+  if (
+    matched >= 0.6 &&
+    oldMedia.width == newMedia.width &&
+    oldMedia.height == newMedia.height
+  ) {
+    oldMedia.id = newMedia.file_id;
+    console.log(`photo match find: ${matched}`);
+    return true;
+  }
+
+  return false;
 },
 
 //special for metro
