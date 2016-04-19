@@ -393,6 +393,15 @@ onInlineQuery = async (query) => {
 
 onInlineResult = (query) => {
   console.log("===> onInlineResult: ", stringify(query));
+  let post = getPost(query.result_id);
+  if (!post) {
+    console.log("WTF! post not found!");
+    return;
+  }
+
+  post.sent_count++;
+  post.inline_use = post.inline_use ? post.inline_use++ : 1;
+  saveContents();
 },
 
 onInlineCallbackQuery = (query) => {
