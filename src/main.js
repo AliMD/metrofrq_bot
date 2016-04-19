@@ -336,66 +336,72 @@ onMessage = (msg) => {
   }
 },
 
-onInlineQuery = (query) => {
-  console.log("===> onInlineQuery: ", stringify(query));
+findFirstAudioInPost = (post) => {
+  for (let i in post.messages) {
+    if(post.messages[i].audio) {
+      return post.messages[i].audio;
+    }
+  }
+  return null;
+},
+
+onInlineQuery = async (query) => {
+  console.log("==> onInlineQuery: ", stringify(query));
 
   var
-  post = data.posts['test'].messages,
-  results = [{
-  //   type: "photo",
-  //   id: "1",
-  //   photo_file_id: post[0].photo.id,
-  //   title: "title1",
-  //   description: "description1",
-  //   caption: "caption1"
-  // },
-  //{
-    type: "audio",
-    id: "2",
-    audio_file_id: post[1].audio.id,
-    title: post[1].audio.title,
-    performer: post[1].audio.performer
-  },
-  {
-    type: "audio",
-    id: "3",
-    audio_file_id: post[1].audio.id,
-    title: post[1].audio.title,
-    performer: post[1].audio.performer
-  },
-  {
-    type: "audio",
-    id: "4",
-    audio_file_id: post[1].audio.id,
-    title: post[1].audio.title,
-    performer: post[1].audio.performer
-  }]
+  latestPosts = findLatestPosts(5), //latest 20 post
+  results = []
   ;
+
+  for (let i in latestPosts) {
+    let
+    post = latestPosts[i],
+    audio = findFirstAudioInPost(post)
+    ;
+    if (!audio) {
+      console.log(`Audio not found in ${post.id}`);
+      continue;
+    }
+    results.push({
+      type: "audio",
+      id: post.id,
+      audio_file_id: audio.id,
+      title: audio.title,
+      performer: audio.performer
+    });
+  }
 
   console.log("results: " + stringify(results));
 
-  bot.answerInlineQuery({
-    inline_query_id: query.id,
-    results: results,
-    cache_time: "1",
-    is_personal: "false",
-    next_offset: ""
-    // switch_pm_text: "",
-    // switch_pm_parameter: ""
-  }, (err, data) => {
-    console.log("answerInlineQueryCallback: " + stringify({err: err, query: query}));
-  })
-  .then((data) => {
-    console.log("answerInlineQuerySuccess: " + stringify(data))
-  })
-  .catch((err) => {
-    console.log("answerInlineQueryError: " + stringify({err: err, query: query}));
-  })
-  ;
+  try {
+    await bot.answerInlineQuery({
+      inline_query_id: query.id,
+      results: results,
+      cache_time: "600", // 10min
+      is_personal: "false",
+      next_offset: ""
+      // switch_pm_text: "",
+      // switch_pm_parameter: ""
+    });
+  }
+  catch (err) {
+    console.log(err);
+  }
+
+  console.log("Sent!");
 },
 
 onInlineResult = (query) => {
   console.log("===> onInlineResult: ", stringify(query));
+  let post = getPost(query.result_id);
+  if (!post) {
+    console.log("WTF! post not found!");
+    return;
+  }
+
+  post.sent_count++;
+  post.inline_use = post.inline_use ? post.inline_use+1 : 1;
+  saveContents();
 },
 
 onInlineCallbackQuery = (query) => {
@@ -942,6 +948,8 @@ sendStatus = (userId) => {
     'All Users': 0,
 
     'Posts Sent': {},
+    'Inline Sent': {},
+
     'Posts Length': 0,
     'All Posts Sent': 0
   };
@@ -964,11 +972,17 @@ sendStatus = (userId) => {
   let posts = Object.keys(data.posts); // array of all post id's
   status['Posts Length'] = posts.length;
   posts.forEach( (postId, i) => {
-    status['Posts Sent'][postId] = (getPost(postId) || {}).sent_count;
-    status['All Posts Sent'] += status['Posts Sent'][postId] || 0;
+    let post = getPost(postId);
+    if(!post) return true;
+
+    status['Posts Sent'][postId] = post.sent_count;
+    status['All Posts Sent'] += post.sent_count;
+
+    if(post.inline_use) status['Inline Sent'][postId] = post.inline_use;
   });
 
   let breakStr = '  "Posts Sent"';
+  // add enter befor "Posts Sent"
   sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
 },
 
@@ -1179,6 +1193,24 @@ updatePhotoPost = (newMedia, oldMedia) => {
   }
 
   return false;
+},
+
+//special for metro
+findLatestPosts = (len = 20) => {
+  console.log('findLatestPosts');
+  var target, latestPosts = [];
+
+  for(var line = 1; data.posts[`${line}_1`]; line++){}
+  line--;
+  console.log(`line: ${line}`);
+
+  for(var station = 1; target = data.posts[`${line}_${station}`]; station++){
+    target.id = `${line}_${station}`;
+    latestPosts.push(target);
+    // console.log(`${line}_${station}`);
+  }
+
+  return latestPosts.reverse().slice(0, len);
 }
 ;
 
