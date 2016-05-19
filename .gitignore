@@ -3,3 +3,4 @@ stores
 console.log
 npm-debug.log
 ecosystem.json
+*.log

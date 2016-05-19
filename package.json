@@ -23,6 +23,5 @@
     "telegram-bot-api": "^1.0.0"
   },
   "devDependencies": {
-    "babel-preset-stage-2": "^6.5.0"
   }
 }
