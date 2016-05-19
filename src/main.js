@@ -231,8 +231,8 @@ onMessage = (msg) => {
   }
 
   //Notify admin
-  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins ') === 0) {
-    msg.text = msg.text.substr('/notifyadmins '.length);
+  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins') === 0) {
+    msg.text = msg.text.substr('/notifyadmins'.length).trim();
     console.log(msg.text);
     if (msg.text.length>1) notifyAdmins(msg.text);
     return;
