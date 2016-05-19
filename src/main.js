@@ -5,6 +5,7 @@
 import telegramBot from 'telegram-bot-api';
 import {l10n} from './i18n';
 import {read, write} from './files';
+const fs = require("fs");
 
 var
 
@@ -231,8 +232,8 @@ onMessage = (msg) => {
   }
 
   //Notify admin
-  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins ') === 0) {
-    msg.text = msg.text.substr('/notifyadmins '.length);
+  if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins') === 0) {
+    msg.text = msg.text.substr('/notifyadmins'.length).trim();
     console.log(msg.text);
     if (msg.text.length>1) notifyAdmins(msg.text);
     return;
@@ -1021,24 +1022,43 @@ restoreBackup = async (userId) => {
   await sendText(userId, "restore is under develope ;)");
 },
 
-sendLog = (userId) => {
+checkFileSendable = (path) => {
+  console.log('checkFileSendable');
+  let fileState = fs.statSync(path);
+  console.log(`${path} size: ${fileState['size']}`);
+  return parseInt(fileState['size'], 10) > 0;
+},
+
+sendLog = async (userId) => {
   console.log('sendLog');
 
-  let callBack = (err, data) => {
-    if (!err) return;
-    // else
+  try {
+    if (checkFileSendable('./err.log')) {
+      await bot.sendDocument({
+        chat_id: userId,
+        document: './err.log'
+      });
+    } else {
+      sendText(userId, 'err.log is empty');
+    }
+
+    if (checkFileSendable('./out.log')) {
+      await bot.sendDocument({
+        chat_id: userId,
+        document: './out.log'
+      });
+    } else {
+      sendText(userId, 'out.log is empty');
+    }
+  }
+  catch (err) {
     let
-    errObj = JSON.stringify({err: err, data: data}, null, 2),
-    errDesc = `makeBackup error!\n${errObj}`
+    errObj = typeof err === 'object' ? JSON.stringify(err, null, 2) : err,
+    errDesc = `sendLog error!\n${errObj}`
     ;
     console.log(errDesc);
     sendText(userId, errDesc);
   }
-
-  bot.sendDocument({
-    chat_id: userId,
-    document: 'console.log'
-  }, callBack);
 },
 
 sortPosts = () => {
