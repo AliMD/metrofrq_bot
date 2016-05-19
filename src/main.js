@@ -1022,18 +1022,18 @@ restoreBackup = async (userId) => {
   await sendText(userId, "restore is under develope ;)");
 },
 
-checkFileSendable = async (path) => {
+checkFileSendable = (path) => {
   console.log('checkFileSendable');
-  let fileState = await fs.stat(path);
+  let fileState = fs.statSync(path);
   console.log(`${path} size: ${fileState['size']}`);
-  return !!fileState['size'];
+  return parseInt(fileState['size'], 10) > 0;
 },
 
 sendLog = async (userId) => {
   console.log('sendLog');
 
   try {
-    if (await checkFileSendable('./err.log')) {
+    if (checkFileSendable('./err.log')) {
       await bot.sendDocument({
         chat_id: userId,
         document: './err.log'
@@ -1042,7 +1042,7 @@ sendLog = async (userId) => {
       sendText(userId, 'err.log is empty');
     }
 
-    if (await checkFileSendable('./out.log')) {
+    if (checkFileSendable('./out.log')) {
       await bot.sendDocument({
         chat_id: userId,
         document: './out.log'
