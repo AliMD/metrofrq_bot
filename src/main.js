@@ -5,6 +5,7 @@
 import telegramBot from 'telegram-bot-api';
 import {l10n} from './i18n';
 import {read, write} from './files';
+const fs = require("fs");
 
 var
 
@@ -1021,18 +1022,34 @@ restoreBackup = async (userId) => {
   await sendText(userId, "restore is under develope ;)");
 },
 
+checkFileSendable = async (path) => {
+  console.log('checkFileSendable');
+  let fileState = await fs.stat(path);
+  console.log(`${path} size: ${fileState['size']}`);
+  return !!fileState['size'];
+},
+
 sendLog = async (userId) => {
   console.log('sendLog');
 
   try {
-    await bot.sendDocument({
-      chat_id: userId,
-      document: 'err.log'
-    });
-    await bot.sendDocument({
-      chat_id: userId,
-      document: 'out.log'
-    });
+    if (checkFileSendable('./err.log')) {
+      await bot.sendDocument({
+        chat_id: userId,
+        document: './err.log'
+      });
+    } else {
+      sendText(userId, 'err.log is empty');
+    }
+
+    if (checkFileSendable('./out.log')) {
+      await bot.sendDocument({
+        chat_id: userId,
+        document: './out.log'
+      });
+    } else {
+      sendText(userId, 'out.log is empty');
+    }
   }
   catch (err) {
     let
