@@ -1,0 +1,18 @@
+{
+  /**
+   * Application configuration section
+   * http://pm2.keymetrics.io/docs/usage/application-declaration/
+   */
+  apps : [
+    {
+      name      : "MetroFrqBot",
+      script    : "index.js",
+      env: {
+        BOT_TOKEN: "1234qwer1234qwer1234qwer1234qwer"
+      },
+      env_production : {
+        NODE_ENV: "production"
+      }
+    }
+  ]
+}
