@@ -13,12 +13,13 @@
       "merge_logs": true,
 
       "autorestart": true,
+      "max_restarts": 2,
       "max_memory_restart": "200M",
       "post_update": ["npm install"],
       "exec_interpreter": "babel-node",
 
       "env": {
-        "BOT_TOKEN": "1234qwer1234qwer1234qwer1234qwer"
+        "BOT_TOKEN": "123qwe"
       },
       "env_production": {
         "NODE_ENV": "production"
