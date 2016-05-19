@@ -1021,24 +1021,27 @@ restoreBackup = async (userId) => {
   await sendText(userId, "restore is under develope ;)");
 },
 
-sendLog = (userId) => {
+sendLog = async (userId) => {
   console.log('sendLog');
 
-  let callBack = (err, data) => {
-    if (!err) return;
-    // else
+  try {
+    await bot.sendDocument({
+      chat_id: userId,
+      document: 'err.log'
+    });
+    await bot.sendDocument({
+      chat_id: userId,
+      document: 'out.log'
+    });
+  }
+  catch (err) {
     let
-    errObj = JSON.stringify({err: err, data: data}, null, 2),
-    errDesc = `makeBackup error!\n${errObj}`
+    errObj = typeof err === 'object' ? JSON.stringify(err, null, 2) : err,
+    errDesc = `sendLog error!\n${errObj}`
     ;
     console.log(errDesc);
     sendText(userId, errDesc);
   }
-
-  bot.sendDocument({
-    chat_id: userId,
-    document: 'console.log'
-  }, callBack);
 },
 
 sortPosts = () => {
