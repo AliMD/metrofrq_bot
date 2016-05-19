@@ -1033,7 +1033,7 @@ sendLog = async (userId) => {
   console.log('sendLog');
 
   try {
-    if (checkFileSendable('./err.log')) {
+    if (await checkFileSendable('./err.log')) {
       await bot.sendDocument({
         chat_id: userId,
         document: './err.log'
@@ -1042,7 +1042,7 @@ sendLog = async (userId) => {
       sendText(userId, 'err.log is empty');
     }
 
-    if (checkFileSendable('./out.log')) {
+    if (await checkFileSendable('./out.log')) {
       await bot.sendDocument({
         chat_id: userId,
         document: './out.log'
