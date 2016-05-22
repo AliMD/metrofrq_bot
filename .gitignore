@@ -4,3 +4,4 @@ console.log
 npm-debug.log
 ecosystem.json
 *.log
+dist
