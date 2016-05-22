@@ -16,7 +16,7 @@
       "max_restarts": 2,
       "max_memory_restart": "200M",
       "post_update": ["npm install"],
-      "exec_interpreter": "babel-node",
+      "exec_interpreter": "node",
 
       "env": {
         "BOT_TOKEN": "123qwe"
