@@ -16,7 +16,8 @@ config = {
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
-  debugMsgs: false
+  debugMsgs: false,
+  aliveNotifyInterval: 60 // min
 },
 
 data = {
@@ -36,6 +37,7 @@ init = () => {
   getBotInfo();
 
   notifyAdmins(`Bot engine restarted!`);
+  setAliveNotify();
 },
 
 bot,
@@ -234,8 +236,17 @@ onMessage = (msg) => {
   //Notify admin
   if(fromAdmin && (msg.text || '').trim().indexOf('/notifyadmins') === 0) {
     msg.text = msg.text.substr('/notifyadmins'.length).trim();
-    console.log(msg.text);
+    // console.log(msg.text);
     if (msg.text.length>1) notifyAdmins(msg.text);
+    return;
+  }
+
+  // setAliveNotify
+  if(fromAdmin && (msg.text || '').trim().indexOf('/setalivenotify') === 0) {
+    msg.text = msg.text.substr('/setalivenotify'.length).trim();
+    console.log(msg.text);
+    let interval = parseInt(msg.text);
+    if (interval>1) setAliveNotify(interval);
     return;
   }
 
@@ -1231,6 +1242,22 @@ findLatestPosts = (len = 20) => {
   }
 
   return latestPosts.reverse().slice(0, len);
+},
+
+aliveNotifyTimeout,
+
+setAliveNotify = (interval = config.aliveNotifyInterval) => {
+  console.log(`setAliveNotify: ${interval}`);
+  if (! (interval>1) ) return false;
+  config.aliveNotifyInterval = interval;
+  clearTimeout(aliveNotifyTimeout);
+  notifyAdmins(`setAliveNotify to ${interval} minutes`);
+  aliveNotify();
+},
+
+aliveNotify = () => {
+  notifyAdmins('I\'m alive ;)');
+  aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60 * 1000);
 }
 ;
 
