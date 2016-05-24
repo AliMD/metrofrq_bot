@@ -12,6 +12,7 @@ var
 config = {
   bot: {},
   token: process.env.BOT_TOKEN,
+  storePath: process.env.BOT_HOME || './stores',
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
@@ -62,10 +63,10 @@ botEvents = () => {
 loadData = () => {
   console.log('loadData');
 
-  data.posts = read('posts', {});
+  data.posts = read('posts', {}, config.storePath);
   console.log(`${Object.keys(data.posts).length} posts loaded`);
 
-  data.users = read('users', {});
+  data.users = read('users', {}, config.storePath);
   console.log(`${Object.keys(data.users).length} users loaded`);
 },
 
@@ -475,8 +476,8 @@ saveContents = (force) => {
   if (force)
   {
     lastTimeout = 0;
-    write('users', data.users);
-    write('posts', data.posts);
+    write('users', data.users, config.storePath);
+    write('posts', data.posts, config.storePath);
   }
   else
   {
