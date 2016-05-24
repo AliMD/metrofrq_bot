@@ -3,6 +3,12 @@ import fs from 'fs';
 export function write(file, data, store = './stores') {
   let filePath = `${store}/${file}.json`;
   console.log(`write ${filePath}`);
+
+  if(!fs.existsSync(store))
+  {
+    fs.mkdirSync(store);
+  }
+
   let json = JSON.stringify(data, null, 2);
   console.log(`${json.length} characters`);
   // console.log(json);
