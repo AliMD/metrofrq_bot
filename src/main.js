@@ -1018,11 +1018,11 @@ makeBackup = async (userId) => {
 
   await bot.sendDocument({
     chat_id: userId,
-    document: 'stores/posts.json'
+    document: `${config.storePath}/posts.json`
   })
   await bot.sendDocument({
     chat_id: userId,
-    document: 'stores/users.json'
+    document: `${config.storePath}/users.json`
   })
 
   return true;
