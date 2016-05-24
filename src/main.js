@@ -19,7 +19,7 @@ config = {
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
   aliveNotifyInterval: 60, // min
-  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 12 * 60 // min
+  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 24 * 60 // min
 },
 
 data = {
@@ -671,6 +671,7 @@ recordNewPost = (userId) => {
         sent_count: 0
       });
       sendText(userId, `Ok, recording end\n${msgs.length} messages recorded for post_id:${postId}`);
+      makeBackup(userId);
       return;
     }
 
