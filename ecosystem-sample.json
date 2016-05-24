@@ -14,13 +14,14 @@
 
       "autorestart": true,
       "max_restarts": 2,
+      "ignore_watch": "*.json",
       "max_memory_restart": "200M",
       "post_update": ["npm install"],
-      "ignore_watch": "*.json",
       "exec_interpreter": "node",
 
       "env": {
-        "BOT_TOKEN": "123qwe"
+        "BOT_TOKEN": "ABCDEF12345",
+        "BOT_HOME" : "./metrofrq.db"
       },
       "env_production": {
         "NODE_ENV": "production"
