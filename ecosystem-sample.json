@@ -16,6 +16,7 @@
       "max_restarts": 2,
       "max_memory_restart": "200M",
       "post_update": ["npm install"],
+      "ignore_watch": "*.json",
       "exec_interpreter": "node",
 
       "env": {
