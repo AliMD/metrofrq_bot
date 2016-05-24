@@ -12,12 +12,14 @@ var
 config = {
   bot: {},
   token: process.env.BOT_TOKEN,
+  storePath: process.env.BOT_HOME || './stores',
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
-  aliveNotifyInterval: 60 // min
+  aliveNotifyInterval: 60, // min
+  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 24 * 60 // min
 },
 
 data = {
@@ -31,6 +33,7 @@ init = () => {
     console.log('BOT_TOKEN not found!');
     return false;
   }
+
   loadData();
   makeBot();
   botEvents();
@@ -38,6 +41,7 @@ init = () => {
 
   notifyAdmins(`Bot engine restarted!`);
   setAliveNotify();
+  autoBackup();
 },
 
 bot,
@@ -62,10 +66,10 @@ botEvents = () => {
 loadData = () => {
   console.log('loadData');
 
-  data.posts = read('posts', {});
+  data.posts = read('posts', {}, config.storePath);
   console.log(`${Object.keys(data.posts).length} posts loaded`);
 
-  data.users = read('users', {});
+  data.users = read('users', {}, config.storePath);
   console.log(`${Object.keys(data.users).length} users loaded`);
 },
 
@@ -475,8 +479,8 @@ saveContents = (force) => {
   if (force)
   {
     lastTimeout = 0;
-    write('users', data.users);
-    write('posts', data.posts);
+    write('users', data.users, config.storePath);
+    write('posts', data.posts, config.storePath);
   }
   else
   {
@@ -667,6 +671,7 @@ recordNewPost = (userId) => {
         sent_count: 0
       });
       sendText(userId, `Ok, recording end\n${msgs.length} messages recorded for post_id:${postId}`);
+      makeBackup(userId);
       return;
     }
 
@@ -1023,6 +1028,22 @@ makeBackup = async (userId) => {
   return true;
 },
 
+autoBackupInterval,
+autoBackup = (interval = config.autoBackupInterval) => {
+  console.log(`autoBackup: ${interval}`);
+  config.autoBackupInterval = interval;
+  clearInterval(autoBackupInterval);
+
+  autoBackupInterval = setInterval(() => {
+    console.log('autoBackup to admins');
+    config.admins.forEach((admin) => {
+      sendText(admin, 'Auto backup:');
+      makeBackup(admin);
+    });
+
+  }, config.autoBackupInterval * 60000);
+},
+
 restoreBackup = async (userId) => {
   console.log('restoreBackup');
 
@@ -1257,7 +1278,7 @@ setAliveNotify = (interval = config.aliveNotifyInterval) => {
 
 aliveNotify = () => {
   notifyAdmins('I\'m alive ;)');
-  aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60 * 1000);
+  aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60000);
 }
 ;
 

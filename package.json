@@ -1,11 +1,11 @@
 {
   "name": "metrofrq_bot",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "Codes for @metrofrq_bot telegram bot.",
   "main": "index.js",
   "scripts": {
-    "prestart": "npm i",
-    "start": "node index.js",
+    "start": "pm2 start ecosystem.json --watch && pm2 logs MetroFrqBot",
+    "stop": "pm2 delete MetroFrqBot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ali Mihandoost <i@ali.md>",
