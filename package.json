@@ -4,8 +4,8 @@
   "description": "Codes for @metrofrq_bot telegram bot.",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ecosystem.json --watch && pm2 logs MetroFrqBot",
-    "stop": "pm2 delete MetroFrqBot",
+    "start": "node index.js",
+    "pm2": "pm2 start ecosystem.json --watch && pm2 logs MetroFrqBot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ali Mihandoost <i@ali.md>",
