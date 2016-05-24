@@ -1,5 +1,14 @@
 import fs from 'fs';
 
+export function solvePath (path) {
+  if(!path) return '';
+  console.log(path);
+  return path.replace(/\$([^/$]+)/g, (_,n) => {
+    console.log(n);
+    return process.env[n];
+  })
+}
+
 export function write(file, data, store = './stores') {
   let filePath = `${store}/${file}.json`;
   console.log(`write ${filePath}`);

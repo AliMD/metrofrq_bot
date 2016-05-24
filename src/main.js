@@ -4,7 +4,7 @@
 
 import telegramBot from 'telegram-bot-api';
 import {l10n} from './i18n';
-import {read, write} from './files';
+import {read, write, solvePath} from './files';
 const fs = require("fs");
 
 var
@@ -12,7 +12,7 @@ var
 config = {
   bot: {},
   token: process.env.BOT_TOKEN,
-  storePath: process.env.BOT_HOME || './stores',
+  storePath: solvePath(process.env.BOT_HOME) || './stores',
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
