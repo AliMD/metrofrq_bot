@@ -18,7 +18,8 @@ config = {
   waitForPosts: 1000, //ms
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
-  aliveNotifyInterval: 60 // min
+  aliveNotifyInterval: 60, // min
+  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 12 * 60 // min
 },
 
 data = {
@@ -32,6 +33,7 @@ init = () => {
     console.log('BOT_TOKEN not found!');
     return false;
   }
+
   loadData();
   makeBot();
   botEvents();
@@ -39,6 +41,7 @@ init = () => {
 
   notifyAdmins(`Bot engine restarted!`);
   setAliveNotify();
+  autoBackup();
 },
 
 bot,
@@ -1024,6 +1027,22 @@ makeBackup = async (userId) => {
   return true;
 },
 
+autoBackupInterval,
+autoBackup = (interval = config.autoBackupInterval) => {
+  console.log(`autoBackup: ${interval}`);
+  config.autoBackupInterval = interval;
+  clearInterval(autoBackupInterval);
+
+  autoBackupInterval = setInterval(() => {
+    console.log('autoBackup to admins');
+    config.admins.forEach((admin) => {
+      sendText(admin, 'Auto backup:');
+      makeBackup(admin);
+    });
+
+  }, config.autoBackupInterval * 60000);
+},
+
 restoreBackup = async (userId) => {
   console.log('restoreBackup');
 
@@ -1258,7 +1277,7 @@ setAliveNotify = (interval = config.aliveNotifyInterval) => {
 
 aliveNotify = () => {
   notifyAdmins('I\'m alive ;)');
-  aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60 * 1000);
+  aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60000);
 }
 ;
 
