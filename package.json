@@ -18,5 +18,13 @@
     "babel-register": "^6.9.0",
     "telegram-bot-api": "^1.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AliMD/metrofrq_bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AliMD/metrofrq_bot/issues"
+  },
+  "homepage": "https://github.com/AliMD/metrofrq_bot#readme"
 }
