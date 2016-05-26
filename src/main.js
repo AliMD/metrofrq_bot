@@ -20,7 +20,7 @@ config = {
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
   aliveNotifyInterval: 60, // min
-  autoBackupInterval: parseFloat(getEnv('BOT_HOME')BOT_BACKUP_INTERVAL) || 24 * 60, // min
+  autoBackupInterval: parseFloat(getEnv('BOT_BACKUP_INTERVAL')) || 24 * 60, // min
   webHost: getEnv('BOT_WEB_HOST') || '0.0.0.0',
   webPort: getEnv('BOT_WEB_PORT') || '8080',
   webStatusUrl: getEnv('BOT_WEB_STATUS_URL') || '/status'

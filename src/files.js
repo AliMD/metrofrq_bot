@@ -1,9 +1,9 @@
 import fs from 'fs';
 
 export function getEnv (name) {
-  log(`getEnv: ${name}`);
+  console.log(`getEnv: ${name}`);
   if (!name) {
-    log('getEnv: env name is empty !');
+    console.log('getEnv: env name is empty !');
     return '';
   }
 
