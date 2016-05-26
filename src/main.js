@@ -2,6 +2,7 @@
  * OneCast Bot
  */
 
+import http from 'http';
 import telegramBot from 'telegram-bot-api';
 import {l10n} from './i18n';
 import {read, write, solvePath} from './files';
@@ -19,7 +20,10 @@ config = {
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
   aliveNotifyInterval: 60, // min
-  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 24 * 60 // min
+  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 24 * 60, // min
+  webHost: process.env.BOT_WEB_HOST || '0.0.0.0',
+  webPort: process.env.BOT_WEB_PORT || '8080',
+  webStatusUrl: process.env.BOT_WEB_STATUS_URL || '/status'
 },
 
 data = {
@@ -27,8 +31,8 @@ data = {
   posts: null
 },
 
-init = () => {
-  console.log('Init');
+main = () => {
+  console.log('Bot engine start');
   if(!config.token){
     console.log('BOT_TOKEN not found!');
     return false;
@@ -42,6 +46,8 @@ init = () => {
   notifyAdmins(`Bot engine restarted!`);
   setAliveNotify();
   autoBackup();
+
+  makeWebServer();
 },
 
 bot,
@@ -957,6 +963,12 @@ uploadAudio = (userId, path) => {
 
 sendStatus = (userId) => {
   console.log(`sendStatus to ${userId}`);
+  let status = makeStatus();
+  sendText(userId, status);
+},
+
+makeStatus = () => {
+  console.log('makeStatus');
   let status = {
     'Users': 0,
     'Groups': 0,
@@ -1000,7 +1012,7 @@ sendStatus = (userId) => {
 
   let breakStr = '  "Posts Sent"';
   // add enter befor "Posts Sent"
-  sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
+  return JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr);
 },
 
 makeBackup = async (userId) => {
@@ -1279,7 +1291,32 @@ setAliveNotify = (interval = config.aliveNotifyInterval) => {
 aliveNotify = () => {
   notifyAdmins('I\'m alive ;)');
   aliveNotifyTimeout = setTimeout(aliveNotify, config.aliveNotifyInterval * 60000);
-}
-;
+},
 
-init();
+makeWebServer = () => {
+  http
+  .createServer((req, res) => {
+    console.log(`new web request: ${req.url}`);
+
+    res.writeHead(200, {
+      'Content-Type': 'text/plain'
+    });
+
+    if (req.url === config.webStatusUrl) {
+      let status = makeStatus();
+      res.write('MetroFrqBot Server Status:\n');
+      res.write(status);
+    }
+
+    else {
+      res.write('MetroFrqBot Server alive ;)');
+    }
+
+    res.end();
+  })
+  .listen(config.webPort, config.webHost)
+  ;
+
+  console.log(`makeWebServer: http://${config.webHost}:${config.webPort}`);
+}
+;main();

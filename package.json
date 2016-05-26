@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "pm2": "pm2 start ecosystem.json --watch && pm2 logs MetroFrqBot",
+    "pm2": "pm2 start ecosystem.json && pm2 logs MetroFrqBot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ali Mihandoost <i@ali.md>",
