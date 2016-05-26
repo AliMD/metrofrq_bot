@@ -963,6 +963,12 @@ uploadAudio = (userId, path) => {
 
 sendStatus = (userId) => {
   console.log(`sendStatus to ${userId}`);
+  let status = makeStatus();
+  sendText(userId, status);
+},
+
+makeStatus = () => {
+  console.log('makeStatus');
   let status = {
     'Users': 0,
     'Groups': 0,
@@ -1006,7 +1012,7 @@ sendStatus = (userId) => {
 
   let breakStr = '  "Posts Sent"';
   // add enter befor "Posts Sent"
-  sendText(userId, JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr));
+  return JSON.stringify(status, null, 2).replace(breakStr, '\n'+breakStr);
 },
 
 makeBackup = async (userId) => {
@@ -1293,15 +1299,17 @@ makeWebServer = () => {
     console.log(`new web request: ${req.url}`);
 
     res.writeHead(200, {
-      'Content-Type': 'text/html'
+      'Content-Type': 'text/plain'
     });
 
     if (req.url === config.webStatusUrl) {
-      res.write('status');
+      let status = makeStatus();
+      res.write('MetroFrqBot Server Status:\n');
+      res.write(status);
     }
 
     else {
-      res.write('Server alive ;)');
+      res.write('MetroFrqBot Server alive ;)');
     }
 
     res.end();
