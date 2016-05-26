@@ -1,6 +1,6 @@
 {
   "name": "metrofrq_bot",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Codes for @metrofrq_bot telegram bot.",
   "main": "index.js",
   "scripts": {
