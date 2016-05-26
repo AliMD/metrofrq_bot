@@ -1,6 +1,6 @@
 {
   "name": "metrofrq_bot",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Codes for @metrofrq_bot telegram bot.",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,13 @@
     "babel-register": "^6.9.0",
     "telegram-bot-api": "^1.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AliMD/metrofrq_bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AliMD/metrofrq_bot/issues"
+  },
+  "homepage": "https://github.com/AliMD/metrofrq_bot#readme"
 }

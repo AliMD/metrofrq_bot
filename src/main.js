@@ -5,25 +5,25 @@
 import http from 'http';
 import telegramBot from 'telegram-bot-api';
 import {l10n} from './i18n';
-import {read, write, solvePath} from './files';
+import {read, write, getEnv} from './files';
 const fs = require("fs");
 
 var
 
 config = {
   bot: {},
-  token: process.env.BOT_TOKEN,
-  storePath: solvePath(process.env.BOT_HOME) || './stores',
+  token: getEnv('BOT_TOKEN'),
+  storePath: getEnv('BOT_HOME') || './stores',
   saveInterval: 5000, // ms
   updateInterval: 1000, //ms
   waitForPosts: 1000, //ms
   admins: [58389411, 34815606], //, 65195363 TODO: load from external config
   debugMsgs: false,
   aliveNotifyInterval: 60, // min
-  autoBackupInterval: parseFloat(process.env.BOT_BACKUP_INTERVAL) || 24 * 60, // min
-  webHost: process.env.BOT_WEB_HOST || '0.0.0.0',
-  webPort: process.env.BOT_WEB_PORT || '8080',
-  webStatusUrl: process.env.BOT_WEB_STATUS_URL || '/status'
+  autoBackupInterval: parseFloat(getEnv('BOT_HOME')BOT_BACKUP_INTERVAL) || 24 * 60, // min
+  webHost: getEnv('BOT_WEB_HOST') || '0.0.0.0',
+  webPort: getEnv('BOT_WEB_PORT') || '8080',
+  webStatusUrl: getEnv('BOT_WEB_STATUS_URL') || '/status'
 },
 
 data = {
